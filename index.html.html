@@ -1,0 +1,656 @@
+<!DOCTYPE html><html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love App</title><style>
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    background-color: black;
+}
+
+/* ===== اللوجو ===== */
+.profile-img {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid white;
+    z-index: 100;
+}
+
+/* ===== شاشة الباسورد ===== */
+#lockScreen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#lockScreen input {
+    padding: 12px;
+    width: 220px;
+    font-size: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    text-align: center;
+    outline: none;
+}
+
+#lockScreen button {
+    margin-top: 15px;
+    padding: 12px 30px;
+    border-radius: 25px;
+    border: none;
+    background: #ff2d55;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ===== الخلفيات ===== */
+.bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 2s ease-in-out;
+    z-index: -2;
+    will-change: opacity;
+}
+
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: -1;
+}
+
+/* ===== النص الرئيسي ===== */
+#main-text {
+    margin-top: 40vh;
+    font-size: 6vw;
+    background: rgba(0,0,0,0.6);
+    padding: 20px;
+    display: inline-block;
+    border-radius: 15px;
+    transition: all 1s ease;
+}
+
+#main-text.up {
+    transform: translateY(-200px);
+    opacity: 0;
+}
+
+/* ===== الأزرار ===== */
+.btn {
+    display: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 2px solid white;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    margin: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ===== الرسائل ===== */
+#msg {
+    background: rgba(0,0,0,0.8);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 85%;
+    margin: 20px auto;
+    display: none;
+    white-space: pre-line;
+    line-height: 1.8;
+}
+
+/* ===== صناديق الإضافات ===== */
+.special-box {
+    background: rgba(0,0,0,0.8);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 85%;
+    margin: 20px auto;
+    display: none;
+    white-space: pre-line;
+    line-height: 1.8;
+}
+
+/* ===== القلوب ===== */
+.heart {
+    position: fixed;
+    bottom: -20px;
+    color: #ff2d55;
+    z-index: 50;
+    pointer-events: none;
+    animation: float 5s linear forwards;
+}
+
+@keyframes float {
+    to {
+        transform: translateY(-120vh);
+        opacity: 0;
+    }
+}
+</style></head><body><img src="image.jpg" alt="Profile" class="profile-img"><!-- شاشة الباسورد --><div id="lockScreen">
+    <h2>Enter Password 🥰</h2><input
+    id="pass"
+    type="password"
+    placeholder="Enter Password"
+    onkeydown="if(event.key === 'Enter') check()"
+>
+
+<button onclick="check()">Open</button>
+
+</div><!-- الخلفيات --><div class="bg" id="bg1"></div>
+<div class="bg" id="bg2"></div>
+<div class="overlay"></div><!-- النص الرئيسي --><div id="main-text">
+    Just For My Everything Basbosa 🌏
+</div><br><button class="btn" id="tap">Tap ❤️</button>
+
+<!-- الأزرار --><div id="buttonsContainer"><button class="btn" onclick="show(1)">
+    27/1/2007 ♥️
+</button>
+
+<button class="btn" onclick="show(2)">
+    12/5/2023 🌏
+</button>
+
+<button class="btn" onclick="show(3)">
+    For You 🥰
+</button>
+
+<br>
+
+<button class="btn" onclick="showLoveCounter()">
+    Our Time ❤️
+</button>
+
+<button class="btn" onclick="showSurprise()">
+    Don't Click 😏❤️
+</button>
+
+<button class="btn" onclick="showBirthday()">
+    Your Birthday 🎂
+</button>
+
+<button class="btn" onclick="showFuture()">
+    Our Future 💍
+</button>
+
+</div><!-- الرسائل --><div id="msg"></div><!-- عداد الحب --><div id="loveCounter" class="special-box"></div><!-- المفاجأة --><div id="surprise" class="special-box"></div><!-- الموسيقى --><audio id="song" loop preload="auto">
+    <source src="music.mp4" type="audio/mp4">
+    Your browser does not support audio.
+</audio><script>
+
+/* =================================
+   🔐 الباسورد وتشغيل الموسيقى
+================================= */
+
+function check(){
+
+    let p = document.getElementById("pass").value.trim();
+
+    if(p === "2712007"){
+
+        /* إخفاء شاشة الباسورد */
+        document.getElementById("lockScreen").style.display = "none";
+
+        /* تشغيل الموسيقى مباشرة */
+        const audio = document.getElementById("song");
+
+        audio.volume = 0.8;
+
+        audio.play()
+            .then(() => {
+                console.log("Music Started ❤️");
+            })
+            .catch((error) => {
+                console.log("Music Error:", error);
+            });
+
+        /* تشغيل الموقع */
+        startApp();
+
+    } else {
+
+        alert("Wrong Password!");
+    }
+}
+
+
+/* =================================
+   🖼️ الصور والخلفيات
+================================= */
+
+const imgs = [
+    '1.jpg',
+    '2.jpg',
+    '3.jpg',
+    '4.jpg',
+    '5.jpg',
+    '6.jpg',
+    '7.jpg',
+    '8.jpg'
+];
+
+let i = 0;
+let cur = 0;
+
+const bg1 = document.getElementById("bg1");
+const bg2 = document.getElementById("bg2");
+
+bg1.style.backgroundImage = `url(${imgs[0]})`;
+bg1.style.opacity = 1;
+
+
+/* تغيير الخلفيات */
+
+function changeBG(){
+
+    i = (i + 1) % imgs.length;
+
+    let next = (cur === 0) ? bg2 : bg1;
+    let prev = (cur === 0) ? bg1 : bg2;
+
+    const img = new Image();
+
+    img.src = imgs[i];
+
+    img.onload = function(){
+
+        next.style.backgroundImage = `url(${imgs[i]})`;
+
+        next.style.opacity = 1;
+
+        prev.style.opacity = 0;
+
+        cur = (cur === 0) ? 1 : 0;
+    };
+}
+
+setInterval(changeBG, 5000);
+
+
+/* =================================
+   ❤️ القلوب
+================================= */
+
+function createHeart(){
+
+    let h = document.createElement("div");
+
+    h.className = "heart";
+
+    h.innerHTML = "❤️";
+
+    h.style.left = Math.random() * 100 + "vw";
+
+    h.style.fontSize =
+        (Math.random() * 20 + 10) + "px";
+
+    document.body.appendChild(h);
+
+    setTimeout(() => h.remove(), 5000);
+}
+
+
+/* =================================
+   🚀 تشغيل الموقع
+================================= */
+
+function startApp(){
+
+    setInterval(createHeart, 400);
+
+    setTimeout(() => {
+
+        document
+            .getElementById("main-text")
+            .classList.add("up");
+
+        document
+            .getElementById("tap")
+            .style.display = "inline-block";
+
+    }, 2000);
+}
+
+
+/* =================================
+   ❤️ زر Tap
+================================= */
+
+document.getElementById("tap").onclick = function(){
+
+    this.style.display = "none";
+
+    document
+        .querySelectorAll(".btn")
+        .forEach(b => {
+
+            b.style.display = "inline-block";
+
+        });
+
+    /* محاولة تشغيل الموسيقى مرة أخرى */
+    document
+        .getElementById("song")
+        .play()
+        .catch(() => {});
+};
+
+
+/* =================================
+   💌 الرسائل الأساسية
+================================= */
+
+const msgData = {
+
+    1:
+    "لما القدر اختار انو يجيب اجمل بنت في الدنيا علشان تكون ليا ♥️",
+
+    2:
+    "اول يوم اتكلمنا فيه وعرفتِ اني بحبك وكان اجمل قرار خدتو في حياتي ♥️🌏",
+
+    3:
+    "عايز اقولك انك اجمل بنت في حياتي ولو الزمن اتعاد بيا 100 مره هفضل اختارك انتي كل مره وعمري ما هزهق ولا ايأس من اي حاجه هتواجهنا وهفضل احبك زي اول يوم حبيتك فيه ومفيش بينا نهايه طول ما احنا عايشين وأنا فاكر كل وعد بينا ومستني اوفيهملك وعد وعد وبحبك يا اجمل بنت جابها القدر ليا ♥️🌏"
+
+};
+
+
+/* =================================
+   إخفاء كل الصناديق
+================================= */
+
+function hideAll(){
+
+    document
+        .getElementById("msg")
+        .style.display = "none";
+
+    document
+        .getElementById("loveCounter")
+        .style.display = "none";
+
+    document
+        .getElementById("surprise")
+        .style.display = "none";
+}
+
+
+/* =================================
+   عرض الرسائل
+================================= */
+
+function show(n){
+
+    hideAll();
+
+    let m = document.getElementById("msg");
+
+    m.style.display = "block";
+
+    m.innerHTML = msgData[n];
+
+    m.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+/* =================================
+   ❤️ Our Time
+================================= */
+
+function showLoveCounter(){
+
+    hideAll();
+
+    let box =
+        document.getElementById("loveCounter");
+
+    box.style.display = "block";
+
+    updateLoveCounter();
+
+    box.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+function updateLoveCounter(){
+
+    const startDate =
+        new Date(2023, 4, 12, 0, 0, 0);
+
+    const now = new Date();
+
+    let diff = now - startDate;
+
+    let totalSeconds =
+        Math.floor(diff / 1000);
+
+    let seconds =
+        totalSeconds % 60;
+
+    let totalMinutes =
+        Math.floor(totalSeconds / 60);
+
+    let minutes =
+        totalMinutes % 60;
+
+    let totalHours =
+        Math.floor(totalMinutes / 60);
+
+    let hours =
+        totalHours % 24;
+
+    let totalDays =
+        Math.floor(totalHours / 24);
+
+    let years =
+        Math.floor(totalDays / 365.25);
+
+    let remainingDays =
+        Math.floor(
+            totalDays -
+            (years * 365.25)
+        );
+
+    let months =
+        Math.floor(
+            remainingDays / 30.44
+        );
+
+    let days =
+        Math.floor(
+            remainingDays -
+            (months * 30.44)
+        );
+
+    document
+        .getElementById("loveCounter")
+        .innerHTML =
+
+        "❤️ Our Time Together ❤️<br><br>" +
+
+        years + " Years ❤️ " +
+        months + " Months ❤️ " +
+        days + " Days<br><br>" +
+
+        hours + " Hours : " +
+        minutes + " Minutes : " +
+        seconds + " Seconds 🥰❤️";
+}
+
+
+/* تحديث العداد كل ثانية */
+
+setInterval(
+    updateLoveCounter,
+    1000
+);
+
+
+/* =================================
+   😏 Don't Click
+================================= */
+
+function showSurprise(){
+
+    hideAll();
+
+    let s =
+        document.getElementById("surprise");
+
+    s.style.display = "block";
+
+    s.innerHTML =
+
+        "قولتلك متدوسيش 😂❤️<br><br>" +
+
+        "بس بما إنك دوستي… 😏<br><br>" +
+
+        "لازم تعرفي إنك أجمل بسبوسة في الدنيا كلها 🥹❤️🌏<br><br>" +
+
+        "وأنا بحبك أكتر مما تتخيلي ❤️";
+
+    s.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+/* =================================
+   🎂 أقرب عيد ميلاد
+================================= */
+
+function showBirthday(){
+
+    hideAll();
+
+    const now = new Date();
+
+    let nextBirthday =
+        new Date(
+            now.getFullYear(),
+            0,
+            27,
+            0,
+            0,
+            0
+        );
+
+
+    if(now > nextBirthday){
+
+        nextBirthday =
+            new Date(
+                now.getFullYear() + 1,
+                0,
+                27,
+                0,
+                0,
+                0
+            );
+    }
+
+
+    let diff =
+        nextBirthday - now;
+
+
+    let days =
+        Math.ceil(
+            diff /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+    let m =
+        document.getElementById("msg");
+
+
+    m.style.display =
+        "block";
+
+
+    m.innerHTML =
+
+        "🎂❤️ Your Birthday ❤️🎂<br><br>" +
+
+        "باقي " +
+        days +
+        " يوم على عيد ميلاد أجمل بنت في الدنيا 🥹❤️<br><br>" +
+
+        "27 / 1 🎂❤️<br><br>" +
+
+        "كل سنة وإنتي أجمل حاجة حصلتلي 🌏❤️";
+
+
+    m.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+/* =================================
+   💍 Our Future
+================================= */
+
+function showFuture(){
+
+    hideAll();
+
+    let m =
+        document.getElementById("msg");
+
+
+    m.style.display =
+        "block";
+
+
+    m.innerHTML =
+
+        "💍 Our Future 💍<br><br>" +
+
+        "مش عايزك تكوني مجرد ذكرى حلوة في حياتي… 🥹❤️<br><br>" +
+
+        "أنا عايزك تكوني حياتي كلها واللي جاي كله معاكي 🌏❤️<br><br>" +
+
+        "نفسي كل سنة من عمري تعدي وإنتي معايا، وكل حلم أحلمه تكوني جزء منه ❤️<br><br>" +
+
+        "ولو الزمن اتعاد بيا ألف مرة… هختارك إنتي في كل مرة 🥹❤️<br><br>" +
+
+        "وأتمنى في يوم من الأيام نفتكر الموقع ده ونضحك ونقول إن كل الكلام ده بدأ من هنا… ولسه مكملين سوا 💍❤️🌏";
+
+
+    m.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+</script></body>
+</html>
